@@ -1,57 +1,60 @@
-const qrcode = require('qrcode-terminal');
-const express = require('express');
+const qrcode = require("qrcode-terminal");
+const express = require("express");
 
-const { Client, LocalAuth, MessageMedia, ChatTypes } = require('whatsapp-web.js');
+const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
 const app = express();
 const port = 3000;
+
+app.use(express.json());
 
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    // args: ['--no-sandbox'],
-  }
+    args: ["--no-sandbox"],
+  },
 });
 
 client.initialize();
 
-client.on('authenticated', () => {
+client.on("authenticated", () => {
   console.log("Authenticated");
-})
+});
 
-client.on('qr', qr => {
+client.on("qr", (qr) => {
   qrcode.generate(qr, { small: true });
 });
 
-client.on('ready', () => {
-  console.log('Client is ready!');
+client.once("ready", () => {
+  console.log("Client is ready!");
 });
 
-client.on('message', message => {
-	if(message.body === 'halo') {
-		client.sendMessage(message.from, `hi ${message.author}`);
-	}
+app.get("/send-message", async (req, res) => {
+  const { message, numbers } = await req.body;
+
+  numbers.map(async (number, index) => {
+    setTimeout(() => {
+      client.sendMessage(number + "@c.us", message);
+    }, index * 5000);
+  });
+
+  res.send("Tunggu di kirim semua, jangan di matiin! cara cek nya lihat nomor terakhir di list udah di kirim atau belum");
 });
 
-app.get('/send-message', (req, res) => {
+app.get("/send-message-with-photo", async (req, res) => {
+  const { image, message, numbers } = await req.body;
 
-  let numbers = [
-    '6287829134143@c.us',
-    '6281288995413@c.us',
-    '6282140897472@c.us',
-    '6282210189370@c.us',
-    '6281333800037@c.us',
-    '6285230898079@c.us',
-    '6282219738846@c.us'
-  ]
+  const media = MessageMedia.fromFilePath(`./media/${image}`);
+  if (media) {
+    numbers.map(async (number, index) => {
+      setTimeout(() => {
+        client.sendMessage(number + "@c.us", media, { caption: message });
+      }, index * 5000);
+    });
+  }
 
-  numbers.map((number) => {
-    client.sendMessage(number, "Test");
-  })
-
-  res.send("udah")
-})
-
+  res.send("Tunggu di kirim semua, jangan di matiin! cara cek nya lihat nomor terakhir di list udah di kirim atau belum");
+});
 
 app.listen(port, () => {
   console.log(`App is running in port ${port}`);
-})
+});
