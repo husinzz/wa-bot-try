@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Whatsapp Messaging",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

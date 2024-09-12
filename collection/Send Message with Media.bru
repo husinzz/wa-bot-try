@@ -1,0 +1,21 @@
+meta {
+  name: Send Message with Media
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:3000/send-message-with-photo
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "image" : "pic.png",
+      "message" : "Hallo",
+      "numbers" : [
+          "6282219738846"
+      ]
+  }
+}

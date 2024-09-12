@@ -1,0 +1,27 @@
+meta {
+  name: Send Message
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/send-message
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "message" : "Hallo",
+      "numbers" : [
+          "6282219738846",
+          "6282219738846",
+          "6282219738846",
+          "6282219738846",
+          "6282219738846",
+          "6282219738846",
+          "6282219738846",
+          "6282219738846"
+      ]
+  }
+}
